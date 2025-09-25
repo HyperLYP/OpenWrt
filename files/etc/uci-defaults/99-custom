@@ -1,0 +1,24 @@
+root_password="password"
+lan_ip_address="192.168.168.1"
+
+# log potential errors
+exec >/tmp/setup.log 2>&1
+
+if [ -n "$root_password" ]; then
+  (echo "$root_password"; sleep 1; echo "$root_password") | passwd > /dev/null
+fi
+
+
+# Configure Hostname
+uci set system.@system[0].hostname='OpenWrt'
+uci commit system
+
+# Configure LAN
+# More options: https://openwrt.org/docs/guide-user/base-system/basic-networking
+if [ -n "$lan_ip_address" ]; then
+  uci set network.lan.ipaddr="$lan_ip_address"
+  uci commit network
+fi
+
+echo "All done!"
+
